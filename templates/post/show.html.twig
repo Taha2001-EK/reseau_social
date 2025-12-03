@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 800px; margin: 30px auto;">
+    
+    {# --- LE POST --- #}
+    <article class="card p-4 mb-4">
+        <h1>{{ post.title }}</h1>
+        <p class="text-muted">
+            Par <strong><a href="{{ path('user_profile', {id: post.author.id}) }}">{{ post.author.username }}</a></strong> 
+            le {{ post.createdAt|date('d/m/Y à H:i') }}
+        </p>
+        <div class="post-content fs-5">
+            {{ post.content|nl2br }}
+        </div>
+
+        {# Boutons (Visible seulement pour l'auteur) #}
+        {% if app.user and app.user == post.author %}
+            <div class="mt-4 pt-3 border-top">
+                <a href="{{ path('post_edit', {'id': post.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                
+                <form method="post" action="{{ path('post_delete', {'id': post.id}) }}" style="display: inline-block;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce post ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                    {# Astuce pour simuler le DELETE demandé par le sujet #}
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button class="btn btn-danger btn-sm">Supprimer</button>
+                </form>
+            </div>
+        {% endif %}
+    </article>
+
+    {# --- LES COMMENTAIRES --- #}
+    <section>
+        <h3>Commentaires ({{ post.comments|length }})</h3>
+
+        {# Formulaire d'ajout #}
+        {% if app.user %}
+            <form action="{{ path('comment_create', {'postId': post.id}) }}" method="post" class="mb-4">
+                <div class="mb-2">
+                    <textarea name="content" class="form-control" rows="3" placeholder="Écrire un commentaire..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Envoyer</button>
+            </form>
+        {% else %}
+            <div class="alert alert-info">
+                <a href="{{ path('app_login') }}">Connectez-vous</a> pour commenter.
+            </div>
+        {% endif %}
+
+        {# Liste #}
+        {% for comment in post.comments %}
+            <div class="card p-3 mb-2 bg-light">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>{{ comment.author.username }}</strong> 
+                        <span class="text-muted small">- {{ comment.createdAt|date('d/m/Y à H:i') }}</span>
+                    </div>
+                    
+                    {# Suppression commentaire #}
+                    {% if app.user and app.user == comment.author %}
+                        <form method="post" action="{{ path('comment_delete', {'id': comment.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-comment' ~ comment.id) }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-link text-danger p-0 border-0 btn-sm">Supprimer</button>
+                        </form>
+                    {% endif %}
+                </div>
+                <p class="mb-0 mt-1">{{ comment.content }}</p>
+            </div>
+        {% else %}
+            <p class="text-muted">Soyez le premier à commenter !</p>
+        {% endfor %}
+    </section>
+
+    <div class="mt-4">
+        <a href="{{ path('app_home') }}">← Retour à l'accueil</a>
+    </div>
+</div>
+{% endblock %}

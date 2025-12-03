@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Post{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 600px; margin: 30px auto;">
+    <h1>Créer un nouveau post</h1>
+
+    {{ form_start(form) }}
+        <div style="margin-bottom: 15px;">
+            {{ form_row(form.title, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div style="margin-bottom: 15px;">
+            {{ form_row(form.content, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+        </div>
+        
+        {{ form_row(form.save) }}
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_home') }}">Retour</a>
+</div>
+{% endblock %}

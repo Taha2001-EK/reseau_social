@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Réseau Social{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 800px; margin: 30px auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1>Fil d'actualité</h1>
+        {% if app.user %}
+            <a href="{{ path('post_create') }}" class="btn btn-primary">Nouveau Post</a>
+        {% endif %}
+    </div>
+
+    {% for post in posts %}
+        <div class="card p-4 mb-3">
+            <h2 class="h4">
+                {# --- C'EST ICI LA CORRECTION --- #}
+                {# Avant c'était href="#" #}
+                <a href="{{ path('post_show', {'id': post.id}) }}" style="text-decoration: none; color: #333;">
+                    {{ post.title }}
+                </a>
+            </h2>
+            
+            <p class="text-muted small">
+                Par <strong>{{ post.author ? post.author.username : 'Anonyme' }}</strong> 
+                le {{ post.createdAt|date('d/m/Y à H:i') }}
+            </p>
+
+            <div class="mb-3">
+                {{ post.content|nl2br }}
+            </div>
+            
+            {# Petit lien bonus pour aller commenter directement #}
+            <a href="{{ path('post_show', {'id': post.id}) }}" class="btn btn-outline-primary btn-sm">
+                Voir les commentaires ({{ post.comments|length }})
+            </a>
+        </div>
+    {% else %}
+        <p>Aucun post pour le moment.</p>
+    {% endfor %}
+</div>
+{% endblock %}

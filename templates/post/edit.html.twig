@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le post{% endblock %}
+
+{% block body %}
+<div class="container" style="max-width: 600px; margin: 30px auto;">
+    <h1>Modifier le post</h1>
+
+    {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_row(form.title, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.content, {'attr': {'class': 'form-control', 'rows': 10}}) }}
+        </div>
+        
+        <div class="d-flex gap-2">
+            {{ form_row(form.save) }}
+            <a href="{{ path('post_show', {'id': app.request.attributes.get('id') }) }}" class="btn btn-secondary">Annuler</a>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sign Up - Facebook Clone{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow border-0 rounded-3">
+                <div class="card-header bg-white text-center py-3 border-bottom-0">
+                    <h2 class="fw-bold mb-1">Sign Up</h2>
+                    <p class="text-muted mb-0">It's quick and easy.</p>
+                </div>
+                <div class="card-body p-4 pt-0">
+                    {{ form_start(registrationForm) }}
+                        {% if not registrationForm.vars.valid %}
+                            <div class="alert alert-danger small">
+                                {{ form_errors(registrationForm) }}
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control', 'placeholder': 'Username'}}) }}
+                            {{ form_errors(registrationForm.username) }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Email address'}}) }}
+                            {{ form_errors(registrationForm.email) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'New password'}}) }}
+                            {{ form_errors(registrationForm.plainPassword) }}
+                        </div>
+
+                        <div class="text-muted small mb-3" style="font-size: 0.75rem;">
+                            People who use our service may have uploaded your contact information to Facebook. <a href="#" class="text-decoration-none">Learn more</a>.
+                        </div>
+
+                        <div class="d-grid gap-2 text-center">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold px-5 mx-auto" style="min-width: 200px;">Sign Up</button>
+                        </div>
+                    {{ form_end(registrationForm) }}
+                </div>
+                <div class="card-footer text-center py-3 bg-white border-0">
+                    <a href="{{ path('app_login') }}" class="text-primary text-decoration-none fw-bold">Already have an account?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

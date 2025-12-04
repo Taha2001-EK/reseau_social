@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center pt-4">
+    <!-- Left Sidebar: Menu -->
+    <div class="col-lg-3 d-none d-lg-block">
+        <div class="list-group list-group-flush bg-transparent">
+          {% if app.user %}
+                <a href="{{ path('app_user_show', {id: app.user.id}) }}" class="list-group-item list-group-item-action bg-transparent border-0 fw-bold">
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar bg-primary text-white me-3" style="width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            {{ app.user.username|first|upper }}
+                        </div>
+                        {{ app.user.username }}
+                    </div>
+                </a>
+            {% endif %}
+            <a href="{{ path('app_post_new') }}" class="list-group-item list-group-item-action bg-transparent border-0 px-2 py-2">
+                <i class="bi bi-plus-circle-fill text-primary me-3 fs-5"></i> Create Post
+            </a>
+        </div>
+    </div>
+
+    <!-- Center Feed: Posts -->
+    <div class="col-lg-6 col-md-8">
+        <!-- Create Post Widget -->
+       {% if app.user %}
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar" style="width: 40px; height: 40px;">
+                        {{ app.user.username }} 
+                    </div>
+                    <a href="{{ path('app_post_new') }}" class="btn btn-light rounded-pill flex-fill ms-3 text-start text-muted">
+                        What's on your mind, {{ app.user.username }}?
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+        <!-- Posts List -->
+        {% for post in posts %}
+            <div class="card mb-4 shadow-sm">
+                <!-- Post Header -->
+                <div class="card-header d-flex justify-content-between align-items-start bg-white border-0 pt-3 px-3 pb-0">
+                    <div class="d-flex align-items-center">
+                        <div class="user-avatar" style="cursor: pointer;" onclick="window.location='{{ path('app_user_show', {id: post.author.id}) }}'">
+                            {{ post.author ? post.author.username|first|upper : '?' }}
+                        </div>
+                        <div class="post-info">
+                            <a href="{{ path('app_user_show', {id: post.author.id}) }}" class="post-author hover-underline">{{ post.author ? post.author.username : 'Unknown' }}</a>
+                            <span class="post-date text-muted small">
+                                {{ post.createdAt ? post.createdAt|date('F j \\a\\t H:i') : '' }}
+                            </span>
+                        </div>
+                    </div>
+                    {% if app.user and post.author and app.user.id == post.author.id %}
+                        <div class="dropdown">
+                            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{{ path('app_post_edit', {'id': post.id}) }}">Edit Post</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    {{ include('post/_delete_form.html.twig') }}
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Post Content -->
+                <div class="card-body px-3 py-2">
+                    <h5 class="card-title fw-normal mb-2 fs-6 d-none">{{ post.title }}</h5> <!-- Hidden title if we want just content stream, but keeping structure -->
+                    <p class="card-text fs-5 mb-0">{{ post.content|nl2br }}</p>
+                </div>
+                
+                <!-- Post Stats -->
+                {% if post.comments|length > 0 %}
+                <div class="px-3 py-2 d-flex justify-content-end text-muted small">
+                    <a href="{{ path('app_post_show', {'id': post.id}) }}" class="text-decoration-none text-muted hover-underline">
+                        {{ post.comments|length }} Comments
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- Post Actions -->
+                <div class="card-footer bg-white border-top pt-1 pb-1">
+                    <div class="d-flex justify-content-center">
+                         <a href="{{ path('app_post_show', {'id': post.id}) }}" class="btn btn-white w-100 text-muted fw-bold py-2">
+                            <i class="bi bi-chat-square me-2"></i> Comment
+                         </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="card text-center py-5">
+                <div class="card-body">
+                    <h5 class="text-muted">No posts yet</h5>
+                    <p class="mb-4">Be the first to share something!</p>
+                    <a href="{{ path('app_post_new') }}" class="btn btn-primary">Create Post</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Right Sidebar: Placeholder or Empty -->
+    <div class="col-lg-3 d-none d-lg-block">
+        <div class="text-muted small fw-bold mb-2">Contacts</div>
+        <!-- We don't have a contact list feature in backend, so we leave this blank or simple static text to maintain layout -->
+        <p class="small text-muted">No contacts available.</p>
+    </div>
+</div>
+{% endblock %}

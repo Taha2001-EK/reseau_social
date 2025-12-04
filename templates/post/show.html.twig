@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Post Details{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center pt-4">
+    <div class="col-lg-8">
+        <!-- Post Card -->
+        <div class="card mb-4 shadow-sm">
+             <div class="card-header d-flex justify-content-between align-items-start bg-white border-0 pt-3 px-3">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar" style="cursor: pointer;" onclick="window.location='{{ path('app_user_show', {id: post.author.id}) }}'">
+                        {{ post.author ? post.author.username|first|upper : '?' }}
+                    </div>
+                    <div class="post-info">
+                        <a href="{{ path('app_user_show', {id: post.author.id}) }}" class="post-author hover-underline">{{ post.author ? post.author.username : 'Unknown User' }}</a>
+                        <span class="post-date text-muted small">
+                            {{ post.createdAt ? post.createdAt|date('F j \\a\\t H:i') : '' }}
+                        </span>
+                    </div>
+                </div>
+                {% if app.user and post.author and app.user.id == post.author.id %}
+                    <div class="dropdown">
+                        <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ path('app_post_edit', {'id': post.id}) }}">Edit Post</a></li>
+                            <li>
+                                {{ include('post/_delete_form.html.twig') }}
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="card-body px-3">
+                <h3 class="card-title h5 mb-3 d-none">{{ post.title }}</h3>
+                <p class="card-text fs-5">{{ post.content|nl2br }}</p>
+            </div>
+            
+             <div class="card-footer bg-white border-top pt-2">
+                <div class="d-flex justify-content-between text-muted small mb-2">
+                    <!-- Only real data: Comment count -->
+                    <span>{{ post.comments|length }} Comments</span>
+                </div>
+                
+                <hr class="mt-0 mb-3">
+
+                <!-- Comments Section -->
+                <div class="comments-section">
+                    {% if is_granted('ROLE_USER') %}
+                        <div class="d-flex mb-4">
+                            <div class="user-avatar" style="width: 32px; height: 32px; margin-right: 10px;">{{ app.user.username|first|upper }}</div>
+                            <div class="flex-grow-1">
+                                {{ form_start(comment_form, {'attr': {'class': 'd-flex align-items-center'}}) }}
+                                    {{ form_widget(comment_form.content, {'attr': {'class': 'form-control rounded-pill bg-light', 'rows': '1', 'placeholder': 'Write a comment...', 'style': 'resize:none;'}}) }}
+                                    <button class="btn btn-primary rounded-circle ms-2" type="submit" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;"><i class="bi bi-send-fill"></i></button>
+                                {{ form_end(comment_form) }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-center mb-4"><a href="{{ path('app_login') }}">Log in</a> to write a comment.</p>
+                    {% endif %}
+
+                    {% for comment in post.comments %}
+                        <div class="d-flex mb-3">
+                            <div class="user-avatar" style="width: 32px; height: 32px; margin-right: 10px; cursor: pointer;" onclick="window.location='{{ path('app_user_show', {id: comment.author.id}) }}'">
+                                {{ comment.author ? comment.author.username|first|upper : '?' }}
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div class="bg-light rounded-3 px-3 py-2 d-inline-block">
+                                    <a href="{{ path('app_user_show', {id: comment.author.id}) }}" class="fw-bold small text-dark text-decoration-none hover-underline">{{ comment.author ? comment.author.username : 'Unknown' }}</a>
+                                    <span class="small d-block text-break">{{ comment.content }}</span>
+                                </div>
+                                <div class="small text-muted ms-2 mt-1 d-flex align-items-center">
+                                    <span class="me-3">{{ comment.createdAt ? comment.createdAt|date('M j') : '' }}</span>
+                                    
+                                     {% if app.user and comment.author and app.user.id == comment.author.id %}
+                                        <form method="post" action="{{ path('app_comment_delete', {'id': comment.id}) }}" onsubmit="return confirm('Delete comment?');" style="display:inline-block">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_comment' ~ comment.id) }}">
+                                            <button class="btn btn-link p-0 text-danger small text-decoration-none fw-bold">Delete</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted small ms-5">No comments yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="text-center mb-4">
+             <a href="{{ path('app_post_index') }}" class="btn btn-secondary btn-sm">Back to Feed</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

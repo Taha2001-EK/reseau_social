@@ -1,0 +1,163 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.username }} | Profile{% endblock %}
+
+{% block body %}
+<!-- Cover Photo Area -->
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Gradient Cover -->
+        <div class="bg-secondary rounded-bottom position-relative shadow-sm" style="background-image: url('https://pbs.twimg.com/profile_banners/1302346848452083722/1648137470/1500x500'); background-size: cover; background-position: center; height: 350px;">
+        </div>
+
+        <!-- Profile Header Info -->
+        <div class="px-4 pb-4 bg-white shadow-sm rounded-bottom mb-4">
+            <div class="row align-items-end">
+                <div class="col-lg-2 col-md-3 position-relative">
+                    <div class="user-avatar bg-primary text-white border border-4 border-white position-absolute shadow" 
+                         style="width: 168px; height: 168px; font-size: 64px; top: -100px; left: 15px; display: flex; align-items: center; justify-content: center;">
+                        {{ user.username|first|upper }}
+                    </div>
+                     <!-- Spacer -->
+                    <div style="height: 70px;"></div> 
+                </div>
+                
+                <div class="col-lg-10 col-md-9 d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-end">
+                    <div class="mb-3 mb-md-0 text-center text-md-start">
+                        <h1 class="fw-bold mb-0">{{ user.username }}</h1>
+                        <p class="text-muted fw-bold mb-0">{{ user.email }}</p>
+                    </div>
+                    
+                  
+                </div>
+            </div>
+            
+            <hr>
+            
+            <!-- Simple Nav -->
+            <ul class="nav nav-pills fw-bold text-secondary" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-0 border-bottom border-3 border-primary text-primary bg-transparent active" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts" type="button" role="tab" aria-controls="posts" aria-selected="true">Mes Posts</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-0 border-bottom border-3 border-transparent text-secondary bg-transparent" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="comments" aria-selected="false">Mes Commentaires</button>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Profile Content -->
+        <div class="row">
+            <!-- Left Column: Intro -->
+            <div class="col-lg-5 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white fw-bold fs-5 border-0 pt-3">Intro</div>
+                    <div class="card-body">
+                         <div class="mb-3"><i class="bi bi-person-badge text-muted me-2"></i> Username: <strong>{{ user.username }}</strong></div>
+                         <div class="mb-3"><i class="bi bi-envelope text-muted me-2"></i> Email: <strong>{{ user.email }}</strong></div>
+                         <div class="mb-3"><i class="bi bi-calendar3 text-muted me-2"></i> Joined: <strong>Recently</strong></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Posts & Comments -->
+            <div class="col-lg-7">
+                <div class="tab-content" id="profileTabsContent">
+                    <!-- Posts Tab -->
+                    <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+                        {% for post in posts %}
+                            <div class="card mb-4 shadow-sm">
+                                <!-- Post Header -->
+                                <div class="card-header d-flex justify-content-between align-items-start bg-white border-0 pt-3 px-3 pb-0">
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; background-color: #0d6efd; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 10px;">
+                                            {{ post.author ? post.author.username|first|upper : '?' }}
+                                        </div>
+                                        <div class="post-info">
+                                            <span class="post-author fw-bold text-dark">{{ post.author ? post.author.username : 'Unknown' }}</span>
+                                            <span class="d-block text-muted small">
+                                                {{ post.createdAt ? post.createdAt|date('F j \\a\\t H:i') : '' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {% if app.user and post.author and app.user.id == post.author.id %}
+                                        <div class="dropdown">
+                                            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="{{ path('app_post_edit', {'id': post.id}) }}">Edit Post</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    {{ include('post/_delete_form.html.twig') }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Post Content -->
+                                <div class="card-body px-3 py-2">
+                                    <p class="card-text fs-5 mb-0">{{ post.content|nl2br }}</p>
+                                </div>
+                                
+                                <!-- Post Stats -->
+                                {% if post.comments|length > 0 %}
+                                <div class="px-3 py-2 d-flex justify-content-end text-muted small">
+                                    <a href="{{ path('app_post_show', {'id': post.id}) }}" class="text-decoration-none text-muted hover-underline">
+                                        {{ post.comments|length }} Comments
+                                    </a>
+                                </div>
+                                {% endif %}
+
+                                <!-- Post Actions -->
+                                <div class="card-footer bg-white border-top pt-1 pb-1">
+                                    <div class="d-flex justify-content-center">
+                                         <a href="{{ path('app_post_show', {'id': post.id}) }}" class="btn btn-white w-100 text-muted fw-bold py-2">
+                                            <i class="bi bi-chat-square me-2"></i> Comment
+                                         </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="card text-center py-5">
+                                <div class="card-body">
+                                     <h5 class="text-muted">No posts to show</h5>
+                                     <p class="small text-muted">This user hasn't posted anything yet.</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Comments Tab -->
+                    <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+                        {% for comment in comments %}
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-body">
+                                    <p class="card-text mb-2">{{ comment.content }}</p>
+                                    <div class="text-muted small">
+                                        {% if comment.post %}
+                                            <a href="{{ path('app_post_show', {'id': comment.post.id}) }}" class="text-decoration-none">
+                                                En réponse à : <strong>{{ comment.post.title ?: 'Post sans titre' }}</strong>
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">Post supprimé</span>
+                                        {% endif %}
+                                        &bull; {{ comment.createdAt|date('d M Y, H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="card text-center py-5">
+                                <div class="card-body">
+                                     <h5 class="text-muted">No comments to show</h5>
+                                     <p class="small text-muted">This user hasn't commented yet.</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

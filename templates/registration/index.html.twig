@@ -3,32 +3,75 @@
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
-<div style="max-width: 600px; margin: 50px auto; padding: 20px;">
-    <h1 style="text-align: center; margin-bottom: 30px;">Rejoindre le réseau</h1>
+<div class="flex min-h-[calc(100vh-136px)] flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-slate-900">Rejoindre le réseau</h2>
+        <p class="mt-2 text-center text-sm text-slate-600">
+            Créez votre compte en quelques secondes
+        </p>
+    </div>
 
-    {# Affichage des erreurs globales #}
-    {{ form_start(registrationForm) }}
+    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-md bg-white p-8 shadow-sm rounded-xl border border-slate-100">
+        {{ form_start(registrationForm, {'attr': {'class': 'space-y-6'}}) }}
+            
+            <div>
+                {# Label styled via Tailwind classes on the label element itself if possible, or wrapping div #}
+                <label for="{{ registrationForm.username.vars.id }}" class="block text-sm font-medium leading-6 text-slate-900">
+                    {{ form_label(registrationForm.username, null, {'label_attr': {'class': 'sr-only'}}) }} Pseudo
+                </label>
+                <div class="mt-2">
+                    {{ form_widget(registrationForm.username, {
+                        'attr': {
+                            'class': 'block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 px-3',
+                            'placeholder': 'Votre pseudo'
+                        }
+                    }) }}
+                </div>
+                <div class="mt-1 text-sm text-red-600">
+                    {{ form_errors(registrationForm.username) }}
+                </div>
+            </div>
+
+            <div>
+                <label for="{{ registrationForm.email.vars.id }}" class="block text-sm font-medium leading-6 text-slate-900">
+                    {{ form_label(registrationForm.email, null, {'label_attr': {'class': 'sr-only'}}) }} Email
+                </label>
+                <div class="mt-2">
+                    {{ form_widget(registrationForm.email, {
+                        'attr': {
+                            'class': 'block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 px-3',
+                            'placeholder': 'exemple@email.com'
+                        }
+                    }) }}
+                </div>
+            </div>
+
+            <div>
+                <label for="{{ registrationForm.password.vars.id }}" class="block text-sm font-medium leading-6 text-slate-900">
+                    {{ form_label(registrationForm.password, null, {'label_attr': {'class': 'sr-only'}}) }} Mot de passe
+                </label>
+                <div class="mt-2">
+                    {{ form_widget(registrationForm.password, {
+                        'attr': {
+                            'class': 'block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 px-3',
+                            'placeholder': 'Mot de passe sécurisé'
+                        }
+                    }) }}
+                </div>
+            </div>
+
+            <div class="pt-2">
+                 <button type="submit" class="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-colors duration-200">
+                    S'inscrire
+                </button>
+            </div>
+
+        {{ form_end(registrationForm) }}
         
-        <div style="margin-bottom: 15px;">
-            {{ form_label(registrationForm.username) }}
-            {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control', 'placeholder': 'Votre pseudo'}}) }}
-            <div style="color: red;">{{ form_errors(registrationForm.username) }}</div>
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            {{ form_label(registrationForm.email) }}
-            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'exemple@email.com'}}) }}
-        </div>
-
-        <div style="margin-bottom: 15px;">
-            {{ form_label(registrationForm.password) }}
-            {{ form_widget(registrationForm.password, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe sécurisé'}}) }}
-        </div>
-
-        <div style="text-align: center; margin-top: 20px;">
-            {{ form_widget(registrationForm.save) }}
-        </div>
-
-    {{ form_end(registrationForm) }}
+        <p class="mt-10 text-center text-sm text-slate-500">
+            Déjà inscrit logic ?
+            <a href="{{ path('app_login') }}" class="font-semibold leading-6 text-primary-600 hover:text-primary-500">Connectez-vous</a>
+        </p>
+    </div>
 </div>
 {% endblock %}

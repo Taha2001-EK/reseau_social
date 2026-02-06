@@ -3,21 +3,66 @@
 {% block title %}Modifier le post{% endblock %}
 
 {% block body %}
-<div class="container" style="max-width: 600px; margin: 30px auto;">
-    <h1>Modifier le post</h1>
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="md:flex md:items-center md:justify-between mb-8">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-slate-900 sm:text-3xl sm:truncate">
+                Modifier le post
+            </h2>
+        </div>
+        <div class="mt-4 flex md:mt-0 md:ml-4">
+             <a href="{{ path('post_show', {'id': app.request.attributes.get('id') }) }}" class="inline-flex items-center px-4 py-2 border border-slate-300 rounded-full shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                Annuler
+            </a>
+        </div>
+    </div>
 
-    {{ form_start(form) }}
-        <div class="mb-3">
-            {{ form_row(form.title, {'attr': {'class': 'form-control'}}) }}
+    <div class="bg-white shadow-sm ring-1 ring-slate-900/5 sm:rounded-xl md:col-span-2">
+        <div class="px-4 py-6 sm:p-8">
+            {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                
+                <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                    <div class="sm:col-span-full">
+                        <label for="{{ form.title.vars.id }}" class="block text-sm font-medium leading-6 text-slate-900">
+                            Titre du post
+                        </label>
+                        <div class="mt-2">
+                             {{ form_widget(form.title, {
+                                'attr': {
+                                    'class': 'block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 px-3',
+                                    'placeholder': 'Un titre accrocheur...'
+                                }
+                            }) }}
+                        </div>
+                        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.title) }}</div>
+                    </div>
+
+                    <div class="col-span-full">
+                        <label for="{{ form.content.vars.id }}" class="block text-sm font-medium leading-6 text-slate-900">
+                            Contenu
+                        </label>
+                        <div class="mt-2">
+                            {{ form_widget(form.content, {
+                                'attr': {
+                                    'class': 'block w-full rounded-md border-0 py-1.5 text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 px-3',
+                                    'rows': 10
+                                }
+                            }) }}
+                        </div>
+                        <div class="mt-1 text-sm text-red-600">{{ form_errors(form.content) }}</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-x-6 border-t border-slate-900/10 pt-4 mt-4">
+                     {{ form_widget(form.save, {
+                        'attr': {
+                            'class': 'rounded-full bg-primary-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-colors duration-200 cursor-pointer'
+                        }
+                    }) }}
+                </div>
+
+            {{ form_end(form) }}
         </div>
-        <div class="mb-3">
-            {{ form_row(form.content, {'attr': {'class': 'form-control', 'rows': 10}}) }}
-        </div>
-        
-        <div class="d-flex gap-2">
-            {{ form_row(form.save) }}
-            <a href="{{ path('post_show', {'id': app.request.attributes.get('id') }) }}" class="btn btn-secondary">Annuler</a>
-        </div>
-    {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}

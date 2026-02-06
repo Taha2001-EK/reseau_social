@@ -3,40 +3,76 @@
 {% block title %}Accueil - Réseau Social{% endblock %}
 
 {% block body %}
-<div class="container" style="max-width: 800px; margin: 30px auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1>Fil d'actualité</h1>
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    {# --- HEADER SECTION --- #}
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Fil d'actualité</h1>
         {% if app.user %}
-            <a href="{{ path('post_create') }}" class="btn btn-primary">Nouveau Post</a>
+            <a href="{{ path('post_create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Nouveau Post
+            </a>
         {% endif %}
     </div>
 
-    {% for post in posts %}
-        <div class="card p-4 mb-3">
-            <h2 class="h4">
-                {# --- C'EST ICI LA CORRECTION --- #}
-                {# Avant c'était href="#" #}
-                <a href="{{ path('post_show', {'id': post.id}) }}" style="text-decoration: none; color: #333;">
-                    {{ post.title }}
-                </a>
-            </h2>
-            
-            <p class="text-muted small">
-                Par <strong>{{ post.author ? post.author.username : 'Anonyme' }}</strong> 
-                le {{ post.createdAt|date('d/m/Y à H:i') }}
-            </p>
+    {# --- POSTS FEED --- #}
+    <div class="space-y-6">
+        {% for post in posts %}
+            <article class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-full bg-gradient-to-br from-primary-100 to-indigo-100 flex items-center justify-center text-primary-600 font-bold">
+                            {{ post.author ? post.author.username|first|upper : 'A' }}
+                        </div>
+                        <div>
+                            <div class="font-semibold text-slate-900 leading-tight">
+                                {{ post.author ? post.author.username : 'Anonyme' }}
+                            </div>
+                            <div class="text-xs text-slate-500">
+                                {{ post.createdAt|date('d/m/Y à H:i') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                {{ post.content|nl2br }}
+                <a href="{{ path('post_show', {'id': post.id}) }}" class="block group">
+                    <h2 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-primary-600 transition-colors">
+                        {{ post.title }}
+                    </h2>
+                    <div class="text-slate-600 leading-relaxed mb-4 whitespace-pre-line">
+                        {{ post.content }}
+                    </div>
+                </a>
+
+                <div class="flex items-center justify-between border-t border-slate-100 pt-4 mt-2">
+                    <div class="flex items-center space-x-4">
+                        <a href="{{ path('post_show', {'id': post.id}) }}" class="flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-primary-600 transition-colors">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <span>{{ post.comments|length }} commentaires</span>
+                        </a>
+                    </div>
+                    <a href="{{ path('post_show', {'id': post.id}) }}" class="group flex items-center gap-1 text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors">
+                        Lire la suite
+                        <svg class="h-4 w-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                </div>
+            </article>
+        {% else %}
+            <div class="text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
+                <svg class="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                <h3 class="mt-2 text-sm font-medium text-slate-900">Aucun post</h3>
+                <p class="mt-1 text-sm text-slate-500">Commencez par créer un nouveau post.</p>
+                {% if app.user %}
+                    <div class="mt-6">
+                        <a href="{{ path('post_create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-full text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            Créer un post
+                        </a>
+                    </div>
+                {% endif %}
             </div>
-            
-            {# Petit lien bonus pour aller commenter directement #}
-            <a href="{{ path('post_show', {'id': post.id}) }}" class="btn btn-outline-primary btn-sm">
-                Voir les commentaires ({{ post.comments|length }})
-            </a>
-        </div>
-    {% else %}
-        <p>Aucun post pour le moment.</p>
-    {% endfor %}
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
